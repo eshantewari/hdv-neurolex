@@ -14,23 +14,19 @@
 # ==============================================================================
 
 r"""A simple demonstration of running VGGish in inference mode.
-
 This is intended as a toy example that demonstrates how the various building
 blocks (feature extraction, model definition and loading, postprocessing) work
 together in an inference context.
-
 A WAV file (assumed to contain signed 16-bit PCM samples) is read in, converted
 into log mel spectrogram examples, fed into VGGish, the raw embedding output is
 whitened and quantized, and the postprocessed embeddings are optionally written
 in a SequenceExample to a TFRecord file (using the same format as the embedding
 features released in AudioSet).
-
 Usage:
   # Run a WAV file through the model and print the embeddings. The model
   # checkpoint is loaded from vggish_model.ckpt and the PCA parameters are
   # loaded from vggish_pca_params.npz in the current directory.
   $ python vggish_inference_demo.py --wav_file /path/to/a/wav/file
-
   # Run a WAV file through the model and also write the embeddings to
   # a TFRecord file. The model checkpoint and PCA parameters are explicitly
   # passed in as well.
@@ -38,7 +34,6 @@ Usage:
                                     --tfrecord_file /path/to/tfrecord/file \
                                     --checkpoint /path/to/model/checkpoint \
                                     --pca_params /path/to/pca/params
-
   # Run a built-in input (a sine wav) through the model and print the
   # embeddings. Associated model files are read from the current directory.
   $ python vggish_inference_demo.py
