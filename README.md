@@ -17,7 +17,9 @@ six
 All can be installed via "pip install ..."  
 
 Python Files that the HDV team has written:  
-pipeline.py #Modification of vggish_inference_demo.py. This takes all .wav files in the "audio_input" directory and creates JSON output files in the "json_output" directory  
+pipeline.py #Modification of vggish_inference_demo.py. This takes all .wav files in the "audio_input" directory and creates JSON output files in the "json_output" directory 
+
+
 audio_download.py #Reads Youtube video information from the "files_to_download.csv" file, strips the audio from each video, and saves the audio as a .wav file to the "audio_inputs" directory  
 
 OUTSTANDING ISSUES  
