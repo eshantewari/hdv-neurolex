@@ -18,10 +18,7 @@ r"""
 Pipeline that reads in all wav files in a folder and then outputs them as json objects 
 
 Usage:
-  $ python vggish_inference_demo.py --wav_file_direc /path/to/wave/file/directory \
-                                    --embedding_direc /path/to/embeddings/directory
-                                    --checkpoint /path/to/model/checkpoint \
-                                    --pca_params /path/to/pca/params
+  $ python vggish_inference_demo.py 
 
 """
 
@@ -41,25 +38,6 @@ import vggish_params
 import vggish_postprocess
 import vggish_slim
 
-flags = tf.app.flags
-
-flags.DEFINE_string(
-    'wav_file_direc', None,
-    'Path to a directory of wav files. Should contain signed 16-bit PCM samples. ')
-
-flags.DEFINE_string(
-    'checkpoint', 'vggish_model.ckpt',
-    'Path to the VGGish checkpoint file.')
-
-flags.DEFINE_string(
-    'pca_params', 'vggish_pca_params.npz',
-    'Path to the VGGish PCA parameters file.')
-
-flags.DEFINE_string(
-    'embedding_direc', None,
-    'Path to the directory in which output embeddings will be stored in JSON format.')
-
-FLAGS = flags.FLAGS
 
 
 def main(_):
@@ -68,30 +46,39 @@ def main(_):
 
   #Read in .wav files from input directory, create array of wav_file names
 
-  wav_files = listdir(FLAGS.wav_file_direc)
+  wav_file_direc = "./audio_input/"
+  embedding_direc = "./json_output/"
+  checkpoint = "vggish_model.ckpt"
+  pca_params = "vggish_pca_params.npz"
+
+
+  wav_files = listdir(wav_file_direc)
   
   #Initialize array of batches and read each wav_file in wav_files array
   batches = []
 
   for wav_file in wav_files:
-    examples_batch = vggish_input.wavfile_to_examples(join(FLAGS.wav_file_direc,wav_file))
-    batches.append(examples_batch)
+    if "wav" in wav_file:
+      print(join(wav_file_direc,wav_file))
+      examples_batch = vggish_input.wavfile_to_examples(join(wav_file_direc,wav_file))
+      batches.append(examples_batch)
 
   # Prepare a postprocessor to munge the model embeddings.
-  pproc = vggish_postprocess.Postprocessor(FLAGS.pca_params)
+  pproc = vggish_postprocess.Postprocessor(pca_params)
 
   output_dicts = []
   with tf.Graph().as_default(), tf.Session() as sess:
     # Define the model in inference mode, load the checkpoint, and
     # locate input and output tensors.
     vggish_slim.define_vggish_slim(training=False)
-    vggish_slim.load_vggish_slim_checkpoint(sess, FLAGS.checkpoint)
+    vggish_slim.load_vggish_slim_checkpoint(sess, checkpoint)
     features_tensor = sess.graph.get_tensor_by_name(
         vggish_params.INPUT_TENSOR_NAME)
     embedding_tensor = sess.graph.get_tensor_by_name(
         vggish_params.OUTPUT_TENSOR_NAME)
 
 
+    output_sequences = []
     #Create a JSON output file for each audio file
     for batch in batches:
       # Run inference and postprocessing.
@@ -99,18 +86,27 @@ def main(_):
                                    feed_dict={features_tensor: batch})
       postprocessed_batch = pproc.postprocess(embedding_batch)
 
-      #Create a dictionary of embeddings to be dumped into a json file
-      output_dict = {}
-      count = 0
-      for embedding in postprocessed_batch:
-        output_dict["t"+str(count)] = embedding
-        count+=1
+      seq_example = tf.train.SequenceExample(
+          feature_lists=tf.train.FeatureLists(
+              feature_list={
+                  vggish_params.AUDIO_EMBEDDING_FEATURE_NAME:
+                      tf.train.FeatureList(
+                          feature=[
+                              tf.train.Feature(
+                                  bytes_list=tf.train.BytesList(
+                                      value=[embedding]))
+                              for embedding in postprocessed_batch
+                          ]
+                      )
+              }
+          )
+      )
 
-      output_dicts.append(output_dict)
+      output_sequences.append(seq_example)
 
   for i in range(0, len(wav_files)):
-    with open(join(FLAGS.embedding_direc,wav_files[i][:-3])+"json", 'w') as outfile:
-      json.dump(output_dicts[i], outfile)
+    with open(join(embedding_direc,wav_files[i][:-3])+"json", 'w') as outfile:
+      json.dump(output_sequences[i], outfile)
 
 
 
