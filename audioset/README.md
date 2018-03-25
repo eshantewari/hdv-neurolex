@@ -17,7 +17,7 @@ six
 * [Embedding PCA parameters](https://storage.googleapis.com/audioset/vggish_pca_params.npz),
   in NumPy compressed archive format.
 
-You can download them using the following two commands:
+You can download them using the following two commands:  
 $ curl -O https://storage.googleapis.com/audioset/vggish_model.ckpt
 $ curl -O https://storage.googleapis.com/audioset/vggish_pca_params.npz
 
