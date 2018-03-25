@@ -10,11 +10,11 @@ tensorflow
 resampy  
 six  
 
-5) pip install the following packages, which are used by the Youtube audio extractor:  
+4) pip install the following packages, which are used by the Youtube audio extractor:  
 
-#Please List Necessary Packages  
+  *TODO Please List Necessary Packages  
 
-4) Download the following two data files into the same directory as your VGGish python files:
+5) Download the following two data files into the same directory as your VGGish python files:
 
 * [VGGish model checkpoint](https://storage.googleapis.com/audioset/vggish_model.ckpt),
   in TensorFlow checkpoint format.
@@ -25,7 +25,7 @@ You can download them using the following two commands:
 $ curl -O https://storage.googleapis.com/audioset/vggish_model.ckpt  
 $ curl -O https://storage.googleapis.com/audioset/vggish_pca_params.npz  
 
-5) Test the download
+6) Test the download
 $ python vggish_smoke_test.py
 If we see "Looks Good To Me", then we're all set.
 
