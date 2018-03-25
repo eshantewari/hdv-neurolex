@@ -2,7 +2,7 @@ Installation Instructions
 
 First, we need to ensure that the build system is up to speed. The easiest way to do this is with Homebrew. Once you install Homebrew, do the following commands:  
 
-brew install autoconf automake libtool
+brew install autoconf automake libtool  
 brew upgrade gawk
 
 Then, download the stable release of openSMILE from the audEERING website (openSMILE 2.1):  
