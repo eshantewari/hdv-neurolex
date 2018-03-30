@@ -12,7 +12,7 @@ six
 
 4) pip install the following packages, which are used by the Youtube audio extractor:  
 
-  *TODO Please List Necessary Packages  
+  pip install youtube_dl pafy ffmpy soundfile
 
 5) Download the following two data files into the same directory as your VGGish python files:
 
